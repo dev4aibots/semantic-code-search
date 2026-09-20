@@ -1,5 +1,7 @@
 # Semantic Code Search
 
+![Terminal Demo](demo.gif)
+
 A specialized RAG system designed to ingest, index, and query entire software repositories. 
 
 ## Tech Stack
@@ -29,6 +31,8 @@ This project is deployed as a serverless backend on Vercel. You can test the API
 
 ```bash
 # Example Request
+
+![Terminal Demo](demo.gif)
 curl -X GET https://semantic-code-search-apqiwu1ow-dev4aibots.vercel.app/api/health
 ```
 
