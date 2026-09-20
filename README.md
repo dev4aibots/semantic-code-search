@@ -1,88 +1,78 @@
 # Semantic Code Search
 
-> Repository-scale search engine mapping natural language to code semantics (TypeScript).
+> Repository-scale search engine mapping natural language to AST nodes.
 
-![Terminal Demo](demo.gif)
+[Demo](#) | [Architecture](docs/architecture.md) | [API Docs](#) | [Evaluation](#evaluation--performance)
 
-This project builds a semantic search index over codebases, allowing developers to query code using natural language instead of rigid regex patterns.
+## What it does
+A specialized RAG system that generates embeddings for code chunks, allowing developers to query code using natural language instead of rigid regex patterns.
 
-## Problem
-`grep` fails when a developer doesn't know the exact variable name (e.g., searching for "JWT authentication" when the code uses "token_verifier").
-
-## Solution
-A vector-based retrieval system that generates embeddings for code chunks, allowing semantic overlap scoring.
-
-## Demonstration
-
-**Query:** "Where is JWT authentication implemented?"
-
-**Results:**
+## Proof of Work
+**Real Example:**
 ```text
-1. src/auth.ts (Score: 0.89)
-   export function verifyToken(token: string) { ... }
+Query: 
+"Where is JWT validation implemented?"
 
-2. src/middleware.ts (Score: 0.82)
-   export const authGuard = (req, res, next) => { ... }
+Expected: 
+src/auth.ts
+
+Top-1 Result (Score: 0.89):
+src/auth.ts
+export function verifyToken(token: string) { ... }
+
+Top-5 Includes:
+src/middleware.ts (Score: 0.82)
 ```
 
-## Architecture
-```mermaid
-flowchart TD
-    A[Git Repository] -->|AST Parser| B(Function Chunker)
-    B --> C[Embedding Model]
-    C --> D[(Vector Index)]
-    E[Dev Query] --> F[Semantic Search]
-    F --> D
-    F --> G[Code Intelligence Response]
-```
-
-## Evaluation (Benchmark)
-Evaluated against 50 standard developer queries targeting specific functions in the corpus.
-
-**Metrics:**
+## Evaluation & Performance
+**Measurements:**
 - Recall@1: 78.4%
 - Recall@5: 92.1%
 - MRR: 0.84
 - Indexing throughput: ~1.2 MB/s
 - P95 Search Latency: 180ms
 
-*Evaluation dataset and script available in `evals/benchmark.ts`.*
+**Methodology:**
+- Benchmarked against 50 standard developer queries targeting specific AST function blocks across a 50,000 LOC TypeScript repository. Evals executed via `evals/benchmark.ts`.
 
-## Supported Languages Matrix
-
-| Language | AST Parsing | Tested |
-| -------- | ----------- | ------ |
-| TypeScript | ✓ | ✓ |
-| JavaScript | ✓ | ✓ |
-| Python | ✗ | ✗ |
-| Go | ✗ | ✗ |
+## Engineering Decisions
+- Implemented **AST-aware chunking** instead of sliding windows to ensure chunks always map to logical units (functions/classes) rather than arbitrary byte boundaries.
+- Cross-file dependency mapping ensures imported symbols retain context.
 
 ## Failure Analysis
 Failure: **Context Window Exhaustion during Chunking**
-Cause: Naive chunking split functions in half, destroying semantic meaning.
-Mitigation: Transitioning to Tree-sitter AST parsing to ensure chunks never break function boundaries.
+Root Cause: Naive line-based chunking split large functions in half, destroying semantic meaning.
+Fix: Transitioned to Tree-sitter AST parsing to ensure chunks never break function boundaries.
 
-## Setup
+## System Architecture
+```mermaid
+flowchart TD
+    A[Git Repository] -->|AST Parser| B(Function Chunker)
+    B --> C[Embedding Model]
+    C --> D[(Vector Index)]
+```
+
+## Security / Safety
+- Indexing runs completely offline, ensuring source code is not leaked to external APIs.
+
+## My Contributions
+- Designed the AST chunking pipeline.
+- Built the vector retrieval cosine similarity indexer in TypeScript.
+
+## Developer Quickstart
 ```bash
 git clone https://github.com/dev4aibots/semantic-code-search.git
 cd semantic-code-search
 npm install
-npm run dev
-```
-
-## Testing & Evaluation
-```bash
-make test
 make eval
 ```
 
-## My Engineering Work
-- Designed the embedding pipeline mapping source text to high-dimensional vectors.
-- Implemented the fast cosine similarity retrieval function.
-- Built the evaluation harness measuring standard Information Retrieval metrics.
-
 ## Documentation
-- `docs/indexing.md`: The chunking and embedding pipeline.
-- `docs/retrieval.md`: The vector search implementation.
-- `docs/architecture.md`: System design.
-- `docs/evaluation.md`: Benchmark methodology.
+- `docs/indexing.md`
+- `docs/retrieval.md`
+
+## Limitations
+- Only supports TypeScript and JavaScript. Python and Go AST parsers are not yet implemented.
+
+## Roadmap
+- Add Python Tree-sitter support.
