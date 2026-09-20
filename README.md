@@ -2,7 +2,9 @@
 
 > Repository-scale search engine mapping natural language to AST nodes.
 
-[Demo](#) | [Architecture](docs/architecture.md) | [API Docs](#) | [Evaluation](#evaluation--performance)
+![Demo](demo.gif)
+
+[Demo](demo.gif) | [Architecture](docs/architecture.md) | [API Docs](#) | [Evaluation](#evaluation--performance)
 
 ## What it does
 A specialized RAG system that generates embeddings for code chunks, allowing developers to query code using natural language instead of rigid regex patterns.
