@@ -1,0 +1,1 @@
+# Indexing\n\nChunks files into semantic blocks before embedding.

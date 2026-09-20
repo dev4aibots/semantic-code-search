@@ -1,0 +1,1 @@
+# Retrieval\n\nCalculates cosine similarity between query and corpus.

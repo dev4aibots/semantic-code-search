@@ -1,12 +1,11 @@
 setup:
-	python -m venv venv
-	venv/bin/pip install -r requirements.txt
+	npm install
 
 test:
-	venv/bin/python -m unittest discover tests
+	npm test
 
 run:
 	npm run dev
 
 eval:
-	venv/bin/python evals/run_eval.py
+	npx tsx evals/benchmark.ts
