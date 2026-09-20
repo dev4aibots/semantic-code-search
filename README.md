@@ -8,12 +8,12 @@
 
 > **A specialized RAG system designed to ingest, index, and semantically query entire software repositories across multiple languages.**
 
-## 🌟 Key Features
-- ✅ **AST-aware code chunking strategy**
-- ✅ **Language-agnostic embedding pipeline**
-- ✅ **Precise cross-file dependency mapping**
+## Key Features
+- **AST-aware code chunking strategy**
+- **Language-agnostic embedding pipeline**
+- **Precise cross-file dependency mapping**
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
 flowchart TD
@@ -25,7 +25,7 @@ flowchart TD
     F --> G[Code Intelligence Response]
 ```
 
-## 🚀 Live API Endpoint (Vercel)
+## Live API Endpoint (Vercel)
 
 This project is deployed serverless via Vercel Edge Functions. You can test the interaction directly from your terminal.
 
@@ -34,7 +34,7 @@ This project is deployed serverless via Vercel Edge Functions. You can test the 
 curl -X GET https://semantic-code-search-apqiwu1ow-dev4aibots.vercel.app/api/health
 ```
 
-## 💻 Developer Quickstart
+## Developer Quickstart
 
 ### Prerequisites
 - Python 3.11+
@@ -66,7 +66,7 @@ curl -X GET https://semantic-code-search-apqiwu1ow-dev4aibots.vercel.app/api/hea
    npm run dev
    ```
 
-## 📁 Project Structure
+## Project Structure
 ```
 .
 ├── api/                  # Vercel serverless endpoints
@@ -77,5 +77,5 @@ curl -X GET https://semantic-code-search-apqiwu1ow-dev4aibots.vercel.app/api/hea
 └── vercel.json           # Vercel routing configuration
 ```
 
-## 📄 License
+## License
 This project is licensed under the MIT License.
