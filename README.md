@@ -1,5 +1,9 @@
 # Semantic Code Search
 
+> 🧪 **Learning build** — a course/tutorial project for studying natural-language code search. Not a production system.
+
+> **Status:** Reference / learning code. The scaffold runs locally for experimentation; it is not deployed, has no production users, and has not been hardened for production use.
+
 > Repository-scale search engine mapping natural language to AST nodes.
 
 ![Demo](demo.gif)
