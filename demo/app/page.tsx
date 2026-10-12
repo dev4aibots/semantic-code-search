@@ -4,7 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as Slider from "@radix-ui/react-slider";
 import * as Dialog from "@radix-ui/react-dialog";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import BlurText from "../components/BlurText";
+import { Reveal, NumberTicker } from "../components/MotionBits";
 import { SAMPLE_CORPUS } from "../lib/corpus.js";
 import { anchor } from "../lib/types.js";
 import type { Chunk, QueryResponse } from "../lib/types.js";
@@ -48,6 +50,23 @@ type Selected = {
 /* Small pieces                                                        */
 /* ------------------------------------------------------------------ */
 
+function SunIcon() {
+  return (
+    <svg className="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      <circle cx="8" cy="8" r="3.2" />
+      <path d="M8 1.5v1.8M8 12.7v1.8M1.5 8h1.8M12.7 8h1.8M3.4 3.4l1.3 1.3M11.3 11.3l1.3 1.3M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg className="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      <path d="M13.2 9.6A5.6 5.6 0 0 1 6.4 2.8a5.6 5.6 0 1 0 6.8 6.8z" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function ThemeToggle() {
   const [theme, setTheme] = useState<"system" | "light" | "dark">("system");
   const [mounted, setMounted] = useState(false);
@@ -61,7 +80,7 @@ function ThemeToggle() {
         document.documentElement.classList.add(s);
       }
     } catch {
-      /* storage unavailable — stay on system */
+      /* storage unavailable, stay on system */
     }
   }, []);
 
@@ -91,7 +110,7 @@ function ThemeToggle() {
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       title={isDark ? "Light mode" : "Dark mode"}
     >
-      <span aria-hidden="true">{isDark ? "☀" : "☾"}</span>
+      {isDark ? <SunIcon /> : <MoonIcon />}
       <span className="t-caption t-secondary">{isDark ? "Light" : "Dark"}</span>
     </button>
   );
@@ -102,7 +121,7 @@ function HealthPill({ health }: { health: { ok: boolean; corpus?: number } | nul
     return (
       <span className="health-pill" aria-label="Checking API status">
         <span className="dot" aria-hidden="true" />
-        checking…
+        checking
       </span>
     );
   }
@@ -132,6 +151,7 @@ export default function Home() {
   const [selected, setSelected] = useState<Selected | null>(null);
   const [health, setHealth] = useState<{ ok: boolean; corpus?: number } | null>(null);
   const thumbRef = useRef<HTMLSpanElement>(null);
+  const [listRef] = useAutoAnimate<HTMLUListElement>();
 
   useEffect(() => {
     let cancelled = false;
@@ -188,7 +208,7 @@ export default function Home() {
     [input, topK, runSearch],
   );
 
-  // Validation playground: malformed POST body → the API's real 400, shown inline.
+  // Validation playground: malformed POST body returns the API's real 400, shown inline.
   const tryBadPost = useCallback(async () => {
     setLoading(true);
     setApiError(null);
@@ -201,7 +221,7 @@ export default function Home() {
       const body = await res.json();
       if (!res.ok) {
         setApiError(
-          `POST /api/query → 400 · ${typeof body?.error === "string" ? body.error : "bad request"}`,
+          `POST /api/query returned 400: ${typeof body?.error === "string" ? body.error : "bad request"}`,
         );
       }
     } catch {
@@ -259,7 +279,7 @@ export default function Home() {
         <div className="nav-inner">
           <div className="nav-title">
             <span className="t-headline">Semantic Code Search</span>
-            <span className="t-caption t-tertiary">dev4aibots · hybrid retrieval demo</span>
+            <span className="t-caption t-tertiary">dev4aibots · code search demo</span>
           </div>
           <div className="nav-actions">
             <HealthPill health={health} />
@@ -272,17 +292,19 @@ export default function Home() {
       </header>
 
       <main className="wrap" style={{ flex: 1 }}>
-        {/* Hero */}
+        {/* Hero: the 10-second story */}
         <section className="hero" aria-labelledby="hero-heading">
-          <p className="hero-eyebrow">DENSE + BM25 + RECIPROCAL RANK FUSION</p>
+          <p className="hero-eyebrow">Search by meaning, not just keywords</p>
           <BlurText
-            text="Ask your codebase in plain English."
-            className="t-large-title"
+            text="Search your codebase the way you'd ask a colleague."
+            className="t-display"
             id="hero-heading"
           />
-          <p className="hero-sub t-body t-secondary">
-            Natural-language queries become ranked code citations — dense embeddings,
-            BM25, and rank fusion, running entirely on this machine. No keys, no cloud.
+          <p className="hero-sub">
+            Type a question in plain English and get back the exact code that
+            answers it, ranked with reasons. This demo searches a real sample
+            codebase, explains every ranking, and runs entirely on this machine.
+            No keys, no cloud, nothing leaves this page.
           </p>
 
           <form onSubmit={onSubmit} role="search" aria-label="Semantic code search">
@@ -304,7 +326,7 @@ export default function Home() {
           </form>
 
           <div className="row mt-3" role="group" aria-label="Example queries">
-            <span className="t-caption t-tertiary">Try:</span>
+            <span className="t-caption t-tertiary">Start with one of these:</span>
             {PROBES.map((p) => (
               <button
                 key={p}
@@ -332,7 +354,7 @@ export default function Home() {
         </section>
 
         {/* Results */}
-        <section className="section" aria-label="Search results">
+        <Reveal as="section" className="section" aria-label="Search results">
           <div className="section-head">
             <h2 className="t-title-2 card-title">Rankings</h2>
             <Tabs.Root value={view} onValueChange={(v) => setView(v as ViewName)}>
@@ -343,6 +365,10 @@ export default function Home() {
               </Tabs.List>
             </Tabs.Root>
           </div>
+          <p className="section-lede t-callout t-secondary">
+            Every row is a live ranking from the ported engine, with a peek at
+            the matching code. Select a row to see the math behind its position.
+          </p>
 
           <div className="card card-pad">
             <div className="row">
@@ -354,7 +380,7 @@ export default function Home() {
               >
                 Results per query
                 <span className="t-footnote t-tertiary" style={{ display: "block", fontWeight: 400 }}>
-                  topK · 1–50
+                  topK, from 1 to 50
                 </span>
               </label>
               <span className="t-code" aria-hidden="true">{topK}</span>
@@ -383,15 +409,15 @@ export default function Home() {
             {!data ? (
               <div className="card-pad">
                 <p className="t-body t-secondary" style={{ margin: 0 }}>
-                  No query yet. Run a search above — every ranking on this page is
-                  computed live by the ported engine via <span className="t-code">/api/query</span>.
+                  No query yet. Run a search above. Every ranking here is computed
+                  live by the ported engine through <span className="t-code">/api/query</span>.
                   Select any result to inspect its citation.
                 </p>
               </div>
             ) : rows.length === 0 ? (
               <div className="card-pad">
                 <p className="t-body t-secondary" style={{ margin: 0 }}>
-                  No results for <span className="t-code">“{data.q}”</span> in this view.
+                  No results for <span className="t-code">&ldquo;{data.q}&rdquo;</span> in this view.
                 </p>
               </div>
             ) : (
@@ -399,10 +425,10 @@ export default function Home() {
                 <div className="card-pad hairline-bottom">
                   <p className="t-subheadline t-tertiary" style={{ margin: 0 }}>
                     {rows.length} {viewLabel[view]} result{rows.length === 1 ? "" : "s"} for{" "}
-                    <span className="t-code">“{data.q}”</span> · topK {data.topK}
+                    <span className="t-code">&ldquo;{data.q}&rdquo;</span> · topK {data.topK}
                   </p>
                 </div>
-                <ul className="result-list" aria-label={`${viewLabel[view]} results`}>
+                <ul className="result-list" ref={listRef} aria-label={`${viewLabel[view]} results`}>
                   {rows.map((row, i) => {
                     const chunk = CHUNKS.get(row.anchor);
                     return (
@@ -416,6 +442,9 @@ export default function Home() {
                         <span className="rank-num" aria-hidden="true">{i + 1}</span>
                         <span className="result-main">
                           <span className="result-anchor">{row.anchor}</span>
+                          {chunk ? (
+                            <span className="code-peek">{chunk.body}</span>
+                          ) : null}
                           {chunk ? (
                             <span className="t-subheadline t-secondary">
                               <span className="t-code">{chunk.symbol}</span>
@@ -439,66 +468,62 @@ export default function Home() {
               </div>
             )}
           </div>
-        </section>
+        </Reveal>
 
         {/* Status */}
-        <section className="section" aria-label="API status">
+        <Reveal as="section" className="section" aria-label="Live status">
           <div className="section-head">
-            <h2 className="t-title-2 card-title">Status</h2>
+            <h2 className="t-title-2 card-title">Live status</h2>
           </div>
+          <p className="section-lede t-callout t-secondary">
+            The status below comes from the same API that serves your rankings.
+          </p>
           <div className="card card-pad">
             <div className="row">
               <HealthPill health={health} />
               <span className="t-callout t-secondary grow">
-                Live <span className="t-code">GET /api/healthz</span> — the same process
-                that serves rankings. The three upstream probe queries run as one-click
-                examples from the hero.
+                Live <span className="t-code">GET /api/healthz</span>, answered by the
+                same process that ranks your queries. The three example queries in
+                the hero are the upstream probe queries, wired as one-click buttons.
               </span>
             </div>
             <div className="hairline-top mt-4" style={{ paddingTop: 16 }}>
-              <p className="t-headline" style={{ margin: "0 0 8px 0" }}>Validation playground</p>
+              <p className="t-headline" style={{ margin: "0 0 8px 0" }}>Try to break it</p>
               <p className="t-callout t-secondary" style={{ margin: "0 0 12px 0" }}>
-                The port rejects bad input with 400s — submit an empty query or a
-                malformed POST body and the API’s real error message appears inline.
+                The API rejects bad input with a 400 error. Send an empty query or
+                a broken POST body and see the real error message, inline.
               </p>
               <div className="row">
                 <button type="button" className="btn btn-quiet" onClick={() => void runSearch("   ", topK)}>
-                  Empty query → 400
+                  Empty query, expect 400
                 </button>
                 <button type="button" className="btn btn-quiet" onClick={() => void tryBadPost()}>
-                  Malformed POST → 400
+                  Broken POST body, expect 400
                 </button>
               </div>
             </div>
           </div>
-        </section>
+        </Reveal>
 
         {/* Benchmark */}
-        <section className="section" aria-label="Benchmark">
+        <Reveal as="section" className="section" aria-label="How well it finds things">
           <div className="section-head">
-            <h2 className="t-title-2 card-title">Benchmark</h2>
-            <span className="t-caption t-tertiary">evals/benchmark.ts · canned results</span>
+            <h2 className="t-title-2 card-title">How well it finds things</h2>
+            <span className="t-caption t-tertiary">evals/benchmark.ts · canned numbers</span>
           </div>
           <div className="card card-pad">
             <div className="stats" role="list" aria-label="Retrieval quality metrics">
-              {[
-                { value: "78.4%", label: "Recall@1" },
-                { value: "92.1%", label: "Recall@5" },
-                { value: "0.84", label: "MRR" },
-                { value: "180 ms", label: "P95 latency" },
-              ].map((s) => (
-                <div className="stat" role="listitem" key={s.label}>
-                  <div className="stat-value">{s.value}</div>
-                  <div className="stat-label t-footnote">{s.label}</div>
-                </div>
-              ))}
+              <NumberTicker value={78.4} format={(v) => `${v.toFixed(1)}%`} label="Recall@1" />
+              <NumberTicker value={92.1} format={(v) => `${v.toFixed(1)}%`} label="Recall@5" />
+              <NumberTicker value={0.84} format={(v) => v.toFixed(2)} label="MRR" />
+              <NumberTicker value={180} format={(v) => `${Math.round(v)} ms`} label="P95 latency" />
             </div>
             <p className="t-footnote t-tertiary mt-3" style={{ marginBottom: 0 }}>
-              Measured upstream via <span className="t-code">make eval</span> on the
-              sample corpus — reported here, not re-run in the browser.
+              Measured upstream with <span className="t-code">make eval</span> on the
+              sample corpus. Reported here, not re-run in your browser.
             </p>
           </div>
-        </section>
+        </Reveal>
       </main>
 
       <footer className="footer">
@@ -508,8 +533,8 @@ export default function Home() {
             <a href={GITHUB_URL} target="_blank" rel="noreferrer" style={{ color: "var(--accent)" }}>
               dev4aibots/semantic-code-search
             </a>
-            . All rankings are computed locally by the ported engine — no external
-            calls, no credentials. Interface follows Apple’s Human Interface
+            . All rankings are computed locally by the ported engine. No external
+            calls, no credentials. Interface follows Apple&rsquo;s Human Interface
             Guidelines; no affiliation with Apple Inc.
           </p>
         </div>
@@ -559,7 +584,7 @@ export default function Home() {
                       <td>
                         {selected.dense
                           ? `#${selected.dense.rank + 1} · ${selected.dense.score.toFixed(4)}`
-                          : "— not in dense top 10"}
+                          : "Not in the dense top 10"}
                       </td>
                     </tr>
                     <tr>
@@ -575,7 +600,7 @@ export default function Home() {
                       <td>
                         {selected.sparse
                           ? `#${selected.sparse.rank + 1} · ${selected.sparse.score.toFixed(4)}`
-                          : "— not in sparse top 10"}
+                          : "Not in the sparse top 10"}
                       </td>
                     </tr>
                     <tr>
@@ -589,8 +614,8 @@ export default function Home() {
                   </tbody>
                 </table>
                 <p className="t-footnote t-tertiary mt-3" style={{ marginBottom: 0 }}>
-                  RRF(k=60) = Σ 1/(60 + rank + 1) over the dense and sparse lists — the
-                  exact formula in the ported <span className="t-code">rrf()</span>.
+                  RRF(k=60) = Σ 1/(60 + rank + 1) over the dense and sparse lists.
+                  That is the exact formula in the ported <span className="t-code">rrf()</span>.
                 </p>
 
                 <div className="row mt-4" style={{ justifyContent: "flex-end" }}>
