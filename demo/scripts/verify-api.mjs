@@ -81,7 +81,7 @@ try {
   {
     const r = await fetch(`${BASE}/`);
     const html = await r.text();
-    check("GET / -> 200 with hero", r.status === 200 && html.includes("Ask your codebase"), String(r.status));
+    check("GET / -> 200 with hero", r.status === 200 && html.includes("Search your codebase the way"), String(r.status));
   }
 } catch (e) {
   console.log("FAIL  harness error —", String(e));
