@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as Slider from "@radix-ui/react-slider";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -91,7 +91,7 @@ function ThemeToggle() {
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       title={isDark ? "Light mode" : "Dark mode"}
     >
-      <span aria-hidden="true">{isDark ? "◐" : "◑"}</span>
+      <span aria-hidden="true">{isDark ? "☀" : "☾"}</span>
       <span className="t-caption t-secondary">{isDark ? "Light" : "Dark"}</span>
     </button>
   );
@@ -131,6 +131,7 @@ export default function Home() {
   const [data, setData] = useState<SearchData | null>(null);
   const [selected, setSelected] = useState<Selected | null>(null);
   const [health, setHealth] = useState<{ ok: boolean; corpus?: number } | null>(null);
+  const thumbRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -166,8 +167,8 @@ export default function Home() {
       }
       const resp = body as QueryResponse;
       const [dRes, sRes] = await Promise.all([
-        fetch(`/api/scores?q=${encodeURIComponent(query)}&view=dense&topK=10`),
-        fetch(`/api/scores?q=${encodeURIComponent(query)}&view=sparse&topK=10`),
+        fetch(`/api/scores?q=${encodeURIComponent(query)}&view=dense&topK=${k}`),
+        fetch(`/api/scores?q=${encodeURIComponent(query)}&view=sparse&topK=${k}`),
       ]);
       const dense: ScoredAnchor[] = dRes.ok ? ((await dRes.json()).results ?? []) : [];
       const sparse: ScoredAnchor[] = sRes.ok ? ((await sRes.json()).results ?? []) : [];
@@ -345,7 +346,12 @@ export default function Home() {
 
           <div className="card card-pad">
             <div className="row">
-              <label htmlFor="topk" className="t-headline grow">
+              <label
+                htmlFor="topk"
+                className="t-headline grow"
+                onClick={() => thumbRef.current?.focus()}
+                style={{ cursor: "pointer" }}
+              >
                 Results per query
                 <span className="t-footnote t-tertiary" style={{ display: "block", fontWeight: 400 }}>
                   topK · 1–50
@@ -369,7 +375,7 @@ export default function Home() {
               <Slider.Track className="slider-track">
                 <Slider.Range className="slider-range" />
               </Slider.Track>
-              <Slider.Thumb className="slider-thumb" aria-label="topK value" />
+              <Slider.Thumb ref={thumbRef} className="slider-thumb" aria-label="topK value" />
             </Slider.Root>
           </div>
 
