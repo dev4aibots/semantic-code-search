@@ -1,5 +1,8 @@
 # Semantic Code Search
 
+🚀 **Live demo:** https://semantic-code-search-demo-5e80mdw18-dev4aibots.vercel.app
+
+
 > 🧪 **Learning build** — a course/tutorial project for studying natural-language code search. Not a production system.
 
 > **Status:** Reference / learning code. The scaffold runs locally for experimentation; it is not deployed, has no production users, and has not been hardened for production use.
