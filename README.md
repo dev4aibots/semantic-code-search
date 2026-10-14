@@ -1,6 +1,6 @@
 # Semantic Code Search
 
-🚀 **Live demo:** https://semantic-code-search-demo-5e80mdw18-dev4aibots.vercel.app
+🚀 **Live demo:** https://semantic-code-search-demo.vercel.app
 
 
 > 🧪 **Learning build** — a course/tutorial project for studying natural-language code search. Not a production system.
