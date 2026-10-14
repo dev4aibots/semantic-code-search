@@ -46,12 +46,15 @@ type TickerProps = {
   duration?: number;
 };
 
-/** Number-ticker: counts up when scrolled into view, then rests. */
+/** Number-ticker: counts up when scrolled into view, then rests.
+ *  Renders the final value on first paint so there is no 0-flash
+ *  during page load; the accessible name (aria-label) already
+ *  carries the final value throughout the animation. */
 export function NumberTicker({ value, format, label, duration = 1.1 }: TickerProps) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-32px" });
   const reduce = useReducedMotion();
-  const [display, setDisplay] = useState(0);
+  const [display, setDisplay] = useState(value);
 
   useEffect(() => {
     if (!inView) return;
