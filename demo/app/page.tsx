@@ -303,8 +303,9 @@ export default function Home() {
           <p className="hero-sub">
             Type a question in plain English and get back the exact code that
             answers it, ranked with reasons. This demo searches a real sample
-            codebase, explains every ranking, and runs entirely on this machine.
-            No keys, no cloud, nothing leaves this page.
+            codebase and explains every ranking. Your search is served by this
+            demo&rsquo;s own API on the same deployment that hosts this page,
+            not by a third-party service. No keys needed.
           </p>
 
           <form onSubmit={onSubmit} role="search" aria-label="Semantic code search">
@@ -533,8 +534,9 @@ export default function Home() {
             <a href={GITHUB_URL} target="_blank" rel="noreferrer" style={{ color: "var(--accent)" }}>
               dev4aibots/semantic-code-search
             </a>
-            . All rankings are computed locally by the ported engine. No external
-            calls, no credentials. Interface follows Apple&rsquo;s Human Interface
+            . All rankings are computed by the ported engine through this
+            deployment&rsquo;s own API. No third-party calls, no credentials.
+            Interface follows Apple&rsquo;s Human Interface
             Guidelines; no affiliation with Apple Inc.
           </p>
         </div>

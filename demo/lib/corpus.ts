@@ -1,5 +1,9 @@
 // Ported from dev4aibots/semantic-code-search src/corpus.ts (SHA 756564f363e8bc76028a2310647d79a2f1e8afdd).
-// Verbatim port — same SAMPLE_CORPUS entries, same order.
+// The six ported entries are verbatim, in the same order. One demo-added
+// entry (auth/services/authentication/login.py) is appended at the end:
+// the ported corpus had authorization code but nothing that handles
+// authentication itself, so plain-English authentication queries had
+// no genuine target to rank first.
 import type { Chunk } from "./types.js";
 
 export const SAMPLE_CORPUS: Chunk[] = [
@@ -59,5 +63,15 @@ export const SAMPLE_CORPUS: Chunk[] = [
     symbol: "rank_fusion",
     body: "pub fn rank_fusion(dense: Vec<Hit>, sparse: Vec<Hit>) -> Vec<Hit>",
     summary: "reciprocal rank fusion of dense and sparse retrieval results",
+  },
+  {
+    repo: "auth",
+    path: "services/authentication/login.py",
+    startLine: 41,
+    endLine: 68,
+    symbol: "handle_authentication",
+    body: "def handle_authentication(request): user = verify_password(request.email, request.password); return create_session(user)",
+    summary:
+      "authentication handled at login: checks user credentials and permissions for authenticated users, then creates a session",
   },
 ];

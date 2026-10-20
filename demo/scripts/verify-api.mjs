@@ -35,7 +35,7 @@ try {
   {
     const r = await fetch(`${BASE}/api/healthz`);
     const j = await r.json();
-    check("GET /api/healthz -> {ok:true, corpus:6}", r.status === 200 && j.ok === true && j.corpus === 6, JSON.stringify(j));
+    check("GET /api/healthz -> {ok:true, corpus:7}", r.status === 200 && j.ok === true && j.corpus === 7, JSON.stringify(j));
   }
   // 2. GET /query returns real fused rankings
   {
