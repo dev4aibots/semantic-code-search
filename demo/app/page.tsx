@@ -293,7 +293,8 @@ export default function Home() {
 
       <main className="wrap" style={{ flex: 1 }}>
         {/* Hero: the 10-second story */}
-        <section className="hero" aria-labelledby="hero-heading">
+        <section className="hero" style={{ position: "relative" }} aria-labelledby="hero-heading">
+          <div className="du-orb-field" aria-hidden="true" />
           <p className="hero-eyebrow">Search by meaning, not just keywords</p>
           <BlurText
             text="Search your codebase the way you'd ask a colleague."
@@ -309,7 +310,7 @@ export default function Home() {
           </p>
 
           <form onSubmit={onSubmit} role="search" aria-label="Semantic code search">
-            <div className="search-capsule">
+            <div className="search-capsule du-beam">
               <input
                 type="search"
                 value={input}
@@ -356,7 +357,8 @@ export default function Home() {
 
         {/* Results */}
         <Reveal as="section" className="section" aria-label="Search results">
-          <div className="section-head">
+          <div className="section-head du-editorial-head">
+            <span className="du-kicker" aria-hidden="true">01</span>
             <h2 className="t-title-2 card-title">Rankings</h2>
             <Tabs.Root value={view} onValueChange={(v) => setView(v as ViewName)}>
               <Tabs.List className="seg" aria-label="Retrieval view">
@@ -371,7 +373,7 @@ export default function Home() {
             the matching code. Select a row to see the math behind its position.
           </p>
 
-          <div className="card card-pad">
+          <div className="card card-pad du-card-lift">
             <div className="row">
               <label
                 htmlFor="topk"
@@ -406,7 +408,7 @@ export default function Home() {
             </Slider.Root>
           </div>
 
-          <div className="card mt-3" aria-live="polite">
+          <div className="card mt-3 du-card-lift" aria-live="polite">
             {!data ? (
               <div className="card-pad">
                 <p className="t-body t-secondary" style={{ margin: 0 }}>
@@ -473,13 +475,14 @@ export default function Home() {
 
         {/* Status */}
         <Reveal as="section" className="section" aria-label="Live status">
-          <div className="section-head">
+          <div className="section-head du-editorial-head">
+            <span className="du-kicker" aria-hidden="true">02</span>
             <h2 className="t-title-2 card-title">Live status</h2>
           </div>
           <p className="section-lede t-callout t-secondary">
             The status below comes from the same API that serves your rankings.
           </p>
-          <div className="card card-pad">
+          <div className="card card-pad du-card-lift">
             <div className="row">
               <HealthPill health={health} />
               <span className="t-callout t-secondary grow">
@@ -508,11 +511,12 @@ export default function Home() {
 
         {/* Benchmark */}
         <Reveal as="section" className="section" aria-label="How well it finds things">
-          <div className="section-head">
+          <div className="section-head du-editorial-head">
+            <span className="du-kicker" aria-hidden="true">03</span>
             <h2 className="t-title-2 card-title">How well it finds things</h2>
             <span className="t-caption t-tertiary">evals/benchmark.ts · canned numbers</span>
           </div>
-          <div className="card card-pad">
+          <div className="card card-pad du-card-lift">
             <div className="stats" role="list" aria-label="Retrieval quality metrics">
               <NumberTicker value={78.4} format={(v) => `${v.toFixed(1)}%`} label="Recall@1" />
               <NumberTicker value={92.1} format={(v) => `${v.toFixed(1)}%`} label="Recall@5" />
