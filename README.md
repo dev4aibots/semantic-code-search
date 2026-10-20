@@ -1,6 +1,6 @@
 # Semantic Code Search
 
-🚀 **Live demo:** https://semantic-code-search-demo.vercel.app
+**Live demo:** https://semantic-code-search-demo.vercel.app
 
 > An engineering deep-dive into semantic code search — real working code, clean architecture, and honestly measured results. The live demo above is deployed and verified.
 
@@ -8,7 +8,7 @@
 
 ![Demo](demo.gif)
 
-[Demo](demo.gif) | [Architecture](docs/architecture.md) | [API Docs](#) | [Evaluation](#evaluation--performance)
+[Demo](demo.gif) | [Architecture](docs/architecture.md) | [Indexing](docs/indexing.md) | [Evaluation](#evaluation--performance)
 
 ## What it does
 A specialized RAG system that generates embeddings for code chunks, allowing developers to query code using natural language instead of rigid regex patterns.
