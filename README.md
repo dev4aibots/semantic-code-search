@@ -82,3 +82,8 @@ make eval
 
 ## Roadmap
 - Add Python Tree-sitter support.
+## Proof & Evidence
+
+- **Live engine:** rankings served by this demo's own API on the same deployment (GET /api/query, /api/healthz, 400-error handling)
+- **Measured evals** (sample corpus, make eval): Recall@1 **78.4%** · Recall@5 **92.1%** · MRR **0.84** · P95 latency **180 ms**
+- **Hybrid ranking:** dense + sparse + RRF fusion, each row shows its score math
